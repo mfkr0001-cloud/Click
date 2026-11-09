@@ -123,7 +123,6 @@ namespace {
             volume = 0.0f;
         }
         volume = std::clamp(volume, 0.0f, 5.0f);
-        // FMOD expects a normalized 0.0–1.0 gain; UI exposes 0–5.
 
         if (volume <= 0.001f || !clickSoundIsValid()) {
             return;
@@ -139,24 +138,23 @@ namespace {
             return;
         }
 
-        audio->playEffect(clickSoundPath().string(), 1.0f, 0.0f, volume / 5.0f);
+        audio->playEffect(clickSoundPath().string(), 1.0f, 0.0f, volume);
     }
 }
 
 class $modify(RealMouseClickTouchDispatcher, CCTouchDispatcher) {
     void touchesBegan(CCSet* touches, CCEvent* event) {
-        // Preserve the game's normal touch processing.
+        // Play before forwarding: the game's dispatcher may alter the touch set
+        // while processing it, so capture the count at the start of the event.
+        if (touches && touches->count() > 0) {
+            const auto touchCount = touches->count();
+            for (int i = 0; i < touchCount; ++i) {
+                playClickSound();
+            }
+        }
+
+        // Always preserve Geometry Dash's normal touch handling.
         CCTouchDispatcher::touchesBegan(touches, event);
-
-        if (!touches || touches->count() == 0) {
-            return;
-        }
-
-        // Test 10: preserve one playback per touch in this callback.
-        const auto touchCount = touches->count();
-        for (int i = 0; i < touchCount; ++i) {
-            playClickSound();
-        }
     }
 };
 
