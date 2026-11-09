@@ -1,4 +1,4 @@
-name: Build Real Mouse Click Android Test 10
+name: Build Real Mouse Click Android Test 11
 
 on:
   workflow_dispatch:
@@ -23,6 +23,6 @@ jobs:
       - name: Upload .geode package
         uses: actions/upload-artifact@v4
         with:
-          name: RealMouseClick-Android64-test10
+          name: RealMouseClick-Android64-test11
           path: ${{ steps.build.outputs.build-output }}/*.geode
           if-no-files-found: error
