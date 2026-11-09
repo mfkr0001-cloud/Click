@@ -174,11 +174,16 @@ namespace {
 // so menus and ordinary screen taps do not produce click sounds.
 class $modify(RealMouseClickGameInput, GJBaseGameLayer) {
     void handleButton(bool down, int button, bool isPlayer1) {
-        GJBaseGameLayer::handleButton(down, button, isPlayer1);
-
         if (down) {
+            static int loggedInputs = 0;
+            if (loggedInputs < 8) {
+                log::info("[RealMouseClick] Gameplay input received: button={}, player1={}", button, isPlayer1);
+                ++loggedInputs;
+            }
             playClickSound();
         }
+
+        GJBaseGameLayer::handleButton(down, button, isPlayer1);
     }
 };
 
@@ -228,8 +233,10 @@ class $modify(RealMouseClickPauseLayer, PauseLayer) {
     }
 
     void onRealMouseClickSettings(CCObject*) {
-        // Opens Geode's native settings UI; enabled/volume values are saved
-        // automatically by Geode and are shared with the touch sound hook.
+        // Diagnostic: clicking this pause-menu button should play the same WAV.
+        // This separates FMOD/resource problems from gameplay-input hook problems.
+        log::info("[RealMouseClick] Pause-menu audio test requested");
+        playClickSound();
         openSettingsPopup(Mod::get());
     }
 };
