@@ -5,9 +5,9 @@
   },
   "id": "mfkr0001.real-mouse-click",
   "name": "Real Mouse Click",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "developer": "mfkr0001",
-  "description": "Diagnostic build: tests click.wav from the pause menu and gameplay input.",
+  "description": "Plays the bundled click sound on touch begin events.",
   "resources": {
     "files": [
       "resources/audio/click.wav"
