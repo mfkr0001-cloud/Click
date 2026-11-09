@@ -5,9 +5,9 @@
   },
   "id": "mfkr0001.real-mouse-click",
   "name": "Real Mouse Click",
-  "version": "1.0.10-test10",
+  "version": "1.1.0",
   "developer": "mfkr0001",
-  "description": "Final pre-remaster Android test: per-touch click playback, strict PCM WAV validation and configurable volume.",
+  "description": "Adds a pause-menu shortcut to persistent settings for the Android touch click sound.",
   "resources": {
     "files": [
       "resources/audio/click.wav"
@@ -32,5 +32,10 @@
         "slider-step": 0.05
       }
     }
-  }
+  },
+  "tags": [
+    "gameplay",
+    "interface",
+    "utility"
+  ]
 }
