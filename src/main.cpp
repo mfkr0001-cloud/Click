@@ -1,5 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/modify/CCTouchDispatcher.hpp>
+#include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PauseLayer.hpp>
 #include <Geode/ui/GeodeUI.hpp>
 
@@ -123,6 +123,7 @@ namespace {
             volume = 0.0f;
         }
         volume = std::clamp(volume, 0.0f, 5.0f);
+        // Convert the 0–5 setting to FMOD gain (0.0–1.0).
 
         if (volume <= 0.001f || !clickSoundIsValid()) {
             return;
@@ -138,23 +139,20 @@ namespace {
             return;
         }
 
-        audio->playEffect(clickSoundPath().string(), 1.0f, 0.0f, volume);
+        audio->playEffect(clickSoundPath().string(), 1.0f, 0.0f, volume / 5.0f);
     }
 }
 
-class $modify(RealMouseClickTouchDispatcher, CCTouchDispatcher) {
-    void touchesBegan(CCSet* touches, CCEvent* event) {
-        // Play before forwarding: the game's dispatcher may alter the touch set
-        // while processing it, so capture the count at the start of the event.
-        if (touches && touches->count() > 0) {
-            const auto touchCount = touches->count();
-            for (int i = 0; i < touchCount; ++i) {
-                playClickSound();
-            }
-        }
+// Listen to Geometry Dash's actual gameplay input, not raw screen touches.
+// This fires only when the game registers a button press (down == true),
+// so menus and ordinary screen taps do not produce click sounds.
+class $modify(RealMouseClickGameInput, GJBaseGameLayer) {
+    void handleButton(bool down, int button, bool isPlayer1) {
+        GJBaseGameLayer::handleButton(down, button, isPlayer1);
 
-        // Always preserve Geometry Dash's normal touch handling.
-        CCTouchDispatcher::touchesBegan(touches, event);
+        if (down) {
+            playClickSound();
+        }
     }
 };
 
