@@ -151,7 +151,7 @@ class $modify(RealMouseClickTouchDispatcher, CCTouchDispatcher) {
 
         // Test 10: preserve one playback per touch in this callback.
         const auto touchCount = touches->count();
-        for (decltype(touchCount) i = 0; i < touchCount; ++i) {
+        for (int i = 0; i < touchCount; ++i) {
             playClickSound();
         }
     }
