@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(RealMouseClick VERSION 1.1.0)
+project(RealMouseClick VERSION 1.1.1)
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK. Set GEODE_SDK to the SDK directory.")
