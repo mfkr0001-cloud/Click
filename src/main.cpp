@@ -1,5 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCTouchDispatcher.hpp>
+#include <Geode/modify/PauseLayer.hpp>
+#include <Geode/ui/GeodeUI.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -154,5 +156,57 @@ class $modify(RealMouseClickTouchDispatcher, CCTouchDispatcher) {
         for (int i = 0; i < touchCount; ++i) {
             playClickSound();
         }
+    }
+};
+
+
+// Adds a shortcut to the mod's persistent Geode settings from the
+// in-level pause menu. The actual settings remain defined in mod.json.
+class $modify(RealMouseClickPauseLayer, PauseLayer) {
+    void customSetup() {
+        PauseLayer::customSetup();
+
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+        auto* menu = CCMenu::create();
+        if (!menu) {
+            log::warn("[RealMouseClick] Could not create pause-menu shortcut");
+            return;
+        }
+
+        auto* buttonSprite = ButtonSprite::create(
+            "CLICK",
+            70,
+            true,
+            "goldFont.fnt",
+            "GJ_button_01.png",
+            30.0f,
+            0.6f
+        );
+        if (!buttonSprite) {
+            log::warn("[RealMouseClick] Could not create pause-menu button sprite");
+            return;
+        }
+
+        auto* button = CCMenuItemSpriteExtra::create(
+            buttonSprite,
+            this,
+            menu_selector(RealMouseClickPauseLayer::onRealMouseClickSettings)
+        );
+        if (!button) {
+            log::warn("[RealMouseClick] Could not create pause-menu button");
+            return;
+        }
+
+        menu->addChild(button);
+        menu->setPosition({ winSize.width * 0.88f, winSize.height * 0.82f });
+        menu->setID("real-mouse-click-settings-menu");
+        this->addChild(menu, 1000);
+    }
+
+    void onRealMouseClickSettings(CCObject*) {
+        // Opens Geode's native settings UI; enabled/volume values are saved
+        // automatically by Geode and are shared with the touch sound hook.
+        openSettingsPopup(Mod::get());
     }
 };
