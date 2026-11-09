@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(RealMouseClick VERSION 1.1.4)
+project(RealMouseClick VERSION 1.1.5)
 
 # The original project stores the WAV under "recources" (legacy typo).
 # Copy that same file into Geode's expected "resources" directory during CI;
