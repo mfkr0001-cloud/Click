@@ -1,0 +1,28 @@
+name: Build Real Mouse Click Android Test 10
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["**"]
+
+jobs:
+  android64:
+    name: Android ARM64
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build Geode mod
+        id: build
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          target: Android64
+          path: .
+
+      - name: Upload .geode package
+        uses: actions/upload-artifact@v4
+        with:
+          name: RealMouseClick-Android64-test10
+          path: ${{ steps.build.outputs.build-output }}/*.geode
+          if-no-files-found: error
