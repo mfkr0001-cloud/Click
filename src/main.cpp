@@ -139,7 +139,33 @@ namespace {
             return;
         }
 
-        audio->playEffect(clickSoundPath().string(), 1.0f, 0.0f, volume / 5.0f);
+        // Explicitly preload the packaged WAV before requesting playback.
+        // The sound is loaded once and then reused for every gameplay press.
+        static bool preloadAttempted = false;
+        if (!preloadAttempted) {
+            preloadAttempted = true;
+            auto* loadedSound = audio->preloadEffect(clickSoundPath().string());
+            if (!loadedSound) {
+                log::error("[RealMouseClick] FMOD could not preload click.wav at: {}",
+                    clickSoundPath().string());
+            } else {
+                log::info("[RealMouseClick] click.wav preloaded successfully");
+            }
+        }
+
+        const int channel = audio->playEffect(
+            clickSoundPath().string(),
+            1.0f,
+            0.0f,
+            volume / 5.0f
+        );
+        if (channel < 0) {
+            static bool loggedPlaybackFailure = false;
+            if (!loggedPlaybackFailure) {
+                log::error("[RealMouseClick] FMOD failed to start click.wav playback");
+                loggedPlaybackFailure = true;
+            }
+        }
     }
 }
 
