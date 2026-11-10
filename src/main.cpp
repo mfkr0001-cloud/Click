@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCTouchDispatcher.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/PauseLayer.hpp>
 #include <Geode/ui/GeodeUI.hpp>
 
@@ -9,50 +10,45 @@
 using namespace geode::prelude;
 
 namespace {
-    std::string getClickSoundPath() {
-        return (Mod::get()->getResourcesDir() / "audio" / "click.wav").string();
-    }
-
     void playClickSound() {
         auto* mod = Mod::get();
-        if (!mod->getSettingValue<bool>("enabled")) return;
+        if (!mod || !mod->getSettingValue<bool>("enabled")) return;
 
         float volume = mod->getSettingValue<float>("volume");
         if (!std::isfinite(volume)) volume = 0.0f;
         volume = std::clamp(volume, 0.0f, 5.0f);
         if (volume <= 0.001f) return;
 
+        const auto path = (mod->getResourcesDir() / "audio" / "click.wav").string();
         auto* audio = FMODAudioEngine::sharedEngine();
         if (!audio) {
             log::error("[RealMouseClick] FMODAudioEngine is unavailable");
             return;
         }
 
-        const auto path = getClickSoundPath();
-        // Do not depend on preloadEffect's cache state: ask FMOD to play the
-        // packaged resource directly for each touch.
         const int channel = audio->playEffect(path, 1.0f, 0.0f, volume / 5.0f);
         if (channel < 0) {
-            log::error("[RealMouseClick] FMOD could not play click.wav: {}", path);
+            log::error("[RealMouseClick] FMOD failed to play click.wav: {}", path);
         }
     }
 }
 
-// Test 10's intended input source: actual Cocos touch-begin events.
-// Call the original dispatcher first so the game and other mods still receive
-// the touch normally, then play one click for each touch in the event set.
+// Catch every touch at the Cocos2d dispatcher level, regardless of its screen
+// position. PlayLayer::get() keeps this limited to an active Geometry Dash level.
 class $modify(RealMouseClickTouchDispatcher, CCTouchDispatcher) {
     void touchesBegan(CCSet* touches, CCEvent* event) {
         CCTouchDispatcher::touchesBegan(touches, event);
 
-        if (!touches) return;
+        if (!touches || !PlayLayer::get()) return;
+
         for (auto it = touches->begin(); it != touches->end(); ++it) {
             playClickSound();
         }
     }
 };
 
-// Settings shortcut in the in-level pause menu. Pressing CLICK also tests audio.
+// Keep the existing pause-menu settings shortcut. The touch itself is already
+// detected by CCTouchDispatcher, so this callback does not play a second sound.
 class $modify(RealMouseClickPauseLayer, PauseLayer) {
     void customSetup() {
         PauseLayer::customSetup();
@@ -80,7 +76,6 @@ class $modify(RealMouseClickPauseLayer, PauseLayer) {
     }
 
     void onRealMouseClickSettings(CCObject*) {
-        playClickSound();
         openSettingsPopup(Mod::get());
     }
 };
