@@ -5,9 +5,9 @@
   },
   "id": "mfkr0001.real-mouse-click",
   "name": "Real Mouse Click",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "developer": "mfkr0001",
-  "description": "Plays click.wav for every screen touch while a level is active.",
+  "description": "Plays a click sound for every screen touch during a level and provides an in-game audio monitor.",
   "resources": {
     "files": [
       "resources/audio/click.wav",
@@ -32,6 +32,12 @@
         "slider": true,
         "slider-step": 0.1
       }
+    },
+    "show-monitor": {
+      "name": "Show in-game audio monitor",
+      "description": "Display the Real Mouse Click diagnostic panel while playing a level.",
+      "type": "bool",
+      "default": true
     }
   },
   "tags": [
