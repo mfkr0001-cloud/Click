@@ -7,10 +7,11 @@
   "name": "Real Mouse Click",
   "version": "1.1.10",
   "developer": "mfkr0001",
-  "description": "Diagnostic build: logs screen touch detection, WAV resource lookup and FMOD playback result.",
+  "description": "Plays click.wav for every screen touch while a level is active.",
   "resources": {
     "files": [
-      "resources/audio/click.wav"
+      "resources/audio/click.wav",
+      "resources/audio/click_loud.wav"
     ]
   },
   "settings": {
