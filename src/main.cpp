@@ -19,7 +19,7 @@ namespace {
         volume = std::clamp(volume, 0.0f, 5.0f);
         if (volume <= 0.001f) return;
 
-        const auto path = (mod->getResourcesDir() / "audio" / "click.wav").string();
+        const auto path = (mod->getResourcesDir() / "click.wav").string();
         auto* audio = FMODAudioEngine::sharedEngine();
         if (!audio) {
             log::error("[RealMouseClick] FMODAudioEngine is unavailable");
